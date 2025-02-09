@@ -4,7 +4,7 @@ import { IAuthorsRepository, SearchParams, SearchResult } from "../interfaces/au
 import { ICreateAuthor } from "../interfaces/create-author";
 import { NotFoundError } from "@/shared/erros/not-found-error";
 
-export class AuthorPrismaRepository implements IAuthorsRepository{
+export class AuthorsPrismaRepository implements IAuthorsRepository{
   sortableFields: string[] = ['name', 'email', 'createdAt']
 
   constructor(private prisma: PrismaService){}
@@ -39,7 +39,7 @@ export class AuthorPrismaRepository implements IAuthorsRepository{
       where: { id}
     })
 
-    if(!id){
+    if(!author){
       throw new NotFoundError(`Author not found using ID ${id}`);
     }
 
