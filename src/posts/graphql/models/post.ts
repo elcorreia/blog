@@ -1,3 +1,4 @@
+import { Author } from '@/authors/graphql/models/author'
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
@@ -14,7 +15,8 @@ export class Post {
   @Field()
   content: string
 
-  @Field()
+  @Field(() => Author)
+  author?: Author
   authorId: string
 
   @Field(() => Boolean)
