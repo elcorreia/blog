@@ -32,7 +32,6 @@ export class AuthorsResolver {
   private deleteAuthorUseCase: DeleteAuthorUsecase.Usecase
 
   @Query(() => SearchAuthorsResult)
-  @UseGuards(GqlAuthGuard)
   async authors(
     @Args() { page, perPage, sort, sortDir, filter }: SearchParamsArgs,
   ) {
