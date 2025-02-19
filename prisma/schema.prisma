@@ -13,33 +13,176 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Author {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String
-  posts     Post[]
-  createdAt DateTime @default(now())
-}
 
-model Post {
-  id        String   @id @default(uuid())
-  title     String
-  slug      String   @unique
-  content   String
-  published Boolean  @default(false)
-  author    Author   @relation(fields: [authorId], references: [id])
-  authorId  String
-  createdAt DateTime @default(now())
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+  BANNED
+  DELETED
 }
 
 model User {
-  id          String   @id @default(uuid())
-  provider    String
-  providerId  String
-  email       String?  @unique
-  name        String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String   @id @default(uuid())
+  email          String?  @unique
+  name           String?
+  username       String?  @unique
+  bio            String?
+  location       String?
+  birthDate      DateTime?
+  avatarImageUrl String?
+  coverImageUrl  String?
+  isVerified     Boolean  @default(false)
+  isPrivate      Boolean  @default(false)
+  status         UserStatus @default(ACTIVE)
+  lastLogin      DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  deletedAt      DateTime?
+
+  // Relacionamento 1:N com contas de provedores
+  accounts        UserAccount[]
+
+  // Relacionamento 1:N para redes sociais
+  socialLinks     SocialLink[]
+
+  // Relacionamento 1:N para posts
+  posts           Post[]
+
+  // Relacionamento 1:N para interações
+  likes           Like[]
+  comments        Comment[]
+  shares         Share[]
+  reposts         Repost[]
+
+  @@index([username])
+}
+
+model UserAccount {
+  id         String  @id @default(uuid())
+  user       User    @relation(fields: [userId], references: [id])
+  userId     String
+  provider   String
+  providerId String
+  createdAt  DateTime @default(now())
 
   @@unique([provider, providerId])
 }
+
+model SocialLink {
+  id       String @id @default(uuid())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+  type     SocialLinkType
+  url      String
+
+  @@index([userId])
+}
+
+enum SocialLinkType {
+  FACEBOOK
+  TWITTER
+  INSTAGRAM
+  LINKEDIN
+  WEBSITE
+}
+
+// 1️⃣ Enums primeiro
+enum PostVisibility {
+  PUBLIC
+  FRIENDS
+  PRIVATE
+}
+
+enum PostStatus {
+  ACTIVE
+  MODERATED
+  DELETED
+}
+
+// 2️⃣ Modelos principais (Post, Tag)
+model Post {
+  id            String   @id @default(uuid())
+  title         String
+  slug          String   @unique
+  content       String
+  imageUrl      String?
+  published     Boolean  @default(false)
+  visibility    PostVisibility @default(PUBLIC)
+  isAnonymous   Boolean  @default(false)
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String
+  location      String?
+  lessonLearned String?
+  status        PostStatus @default(ACTIVE) // Status do post
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime? @updatedAt
+
+  // Relacionamento 1:N para interações
+  likes         Like[]
+  comments      Comment[]
+  shares        Share[]
+  reposts       Repost[]
+  postTag       PostTag[]
+
+  @@index([userId])
+}
+
+model Tag {
+  id    String @id @default(uuid())
+  name  String @unique
+  posts PostTag[]
+}
+
+// 3️⃣ Modelos de relacionamento (PostTag)
+model PostTag {
+  postId String
+  tagId  String
+  post   Post @relation(fields: [postId], references: [id])
+  tag    Tag  @relation(fields: [tagId], references: [id])
+
+  @@id([postId, tagId]) // Chave composta para evitar duplicação
+}
+
+// 4️⃣ Modelos auxiliares (Like, Comment, Share, Repost)
+model Like {
+  id      String  @id @default(uuid())
+  post    Post    @relation(fields: [postId], references: [id])
+  postId  String
+  user    User    @relation(fields: [userId], references: [id])
+  userId  String
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId]) // Evita múltiplos likes do mesmo usuário
+}
+
+model Comment {
+  id      String  @id @default(uuid())
+  post    Post    @relation(fields: [postId], references: [id])
+  postId  String
+  user    User    @relation(fields: [userId], references: [id])
+  userId  String
+  content String
+  createdAt DateTime @default(now())
+}
+
+model Share {
+  id      String  @id @default(uuid())
+  post    Post    @relation(fields: [postId], references: [id])
+  postId  String
+  user    User    @relation(fields: [userId], references: [id])
+  userId  String
+  createdAt DateTime @default(now())
+}
+
+model Repost {
+  id        String @id @default(uuid())
+  post      Post   @relation(fields: [postId], references: [id])
+  postId    String
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+}
+
+
+

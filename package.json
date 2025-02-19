@@ -19,7 +19,8 @@
     "test:debug": "npx dotenv-cli -e .env.test -- node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "npx dotenv-cli -e .env.test -- jest --runInBand --config ./jest.e2e.config.ts",
     "test:int": "npx dotenv-cli -e .env.test -- jest --runInBand --config ./jest.int.config.ts",
-    "prisma:migratetest": "npx dotenv-cli -e .env.test -- npx prisma migrate deploy"
+    "prisma:migratetest": "npx dotenv-cli -e .env.test -- npx prisma migrate deploy",
+    "prisma:seed": "ts-node src/prisma/seed.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.11.2",
@@ -68,7 +69,7 @@
     "supertest": "^7.0.0",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
   }

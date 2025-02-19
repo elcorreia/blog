@@ -11,7 +11,7 @@ export class SignTokenUseCase {
     const payload = {
       sub: user.id,
       email: user.email,
-      provider: user.provider,
+      // provider: user.provider,
     };
 
     // Assinamos o token

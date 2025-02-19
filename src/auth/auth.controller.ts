@@ -20,6 +20,7 @@ export class AuthController {
   @Get('facebook/callback')
   @UseGuards(AuthGuard('facebook'))
   async facebookCallback(@Req() req: any, @Res() res: any) {
+    console.log(req.user)
     const { provider, providerId, email, name } = req.user;
 
     // 1. Cria ou busca usuário no BD

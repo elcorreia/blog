@@ -14,7 +14,7 @@ async function bootstrap() {
   )
 
   // Aplica autenticação JWT globalmente (todas as queries e mutations protegidas)
-  app.useGlobalGuards(new GqlAuthGuard());
+  // app.useGlobalGuards(new GqlAuthGuard());
 
   await app.listen(process.env.PORT ?? 3000)
 }

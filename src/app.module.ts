@@ -7,9 +7,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import path from 'node:path';
 import { AppResolver } from './app.resolver';
-import { AuthorsModule } from './authors/authors.module';
-import { PostsModule } from './posts/posts.module';
 import { AuthModule } from './auth/auth.module';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -20,9 +19,8 @@ import { AuthModule } from './auth/auth.module';
       autoSchemaFile: path.resolve(process.cwd(), 'src/schema.gql'),
       playground: true
     }),
-    AuthorsModule,
-    PostsModule,
     AuthModule,
+    PostModule
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],
