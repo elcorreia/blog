@@ -2,16 +2,15 @@ import { SearchInput } from '@/shared/dto/search-input'
 import { PostOutput } from '../dto/post-output.dto'
 import { PostRepository } from '../repositories/post.repository'
 import { PaginationOutput } from '@/shared/dto/pagination-output'
+import { Injectable } from '@nestjs/common'
 
-export namespace ListAuthorsUsecase {
-  export type Input = SearchInput
 
-  export type Output = PaginationOutput<PostOutput>
+@Injectable()
+export class ListPostsUsecase {
 
-  export class Usecase {
-    constructor(private postRepository: PostRepository) {}
+  constructor(private readonly postRepository: PostRepository) {}
 
-    async execute(input: Input): Promise<Output> {
+    async execute(input: SearchInput): Promise<PaginationOutput> {
       const searchResult = await this.postRepository.search(input)
       return {
         items: searchResult.items,
@@ -21,5 +20,5 @@ export namespace ListAuthorsUsecase {
         lastPage: searchResult.lastPage,
       }
     }
-  }
+
 }

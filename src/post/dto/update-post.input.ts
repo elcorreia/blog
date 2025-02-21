@@ -6,7 +6,7 @@ import { PostVisibility } from '@prisma/client';
 export class UpdatePostInput {
   @Field(() => String)
   @IsString()
-  postId: string;
+  id: string;
 
   @Field(() => String, { nullable: true })
   @IsOptional()

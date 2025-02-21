@@ -1,9 +1,10 @@
 import { InputType, Field } from '@nestjs/graphql';
 import { IsNotEmpty, IsOptional, IsBoolean, IsEnum, IsString, Min } from 'class-validator';
-import { PostVisibility } from '@prisma/client';
+import { PostStatus, PostVisibility } from '@prisma/client'
 
 @InputType()
 export class CreatePostInput {
+
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
@@ -31,6 +32,11 @@ export class CreatePostInput {
   @IsOptional()
   @IsEnum(PostVisibility)
   visibility?: PostVisibility;
+
+  @Field(() => PostStatus, { nullable: true })
+  @IsOptional()
+  @IsEnum(PostStatus)
+  status?: PostStatus;
 
   @Field(() => String, { nullable: true })
   @IsOptional()

@@ -9,6 +9,7 @@ import path from 'node:path';
 import { AppResolver } from './app.resolver';
 import { AuthModule } from './auth/auth.module';
 import { PostModule } from './post/post.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { PostModule } from './post/post.module';
       playground: true
     }),
     AuthModule,
-    PostModule
+    PostModule,
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],

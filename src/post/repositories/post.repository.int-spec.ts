@@ -4,7 +4,9 @@ import { execSync } from 'node:child_process'
 import { NotFoundError } from '@/shared/erros/not-found-error'
 import { PostRepository } from './post.repository'
 import { PostDataBuilder } from '../helpers/post-data-builder'
-import { AuthorDataBuilder } from '@/authors/helpers/author-data-builder'
+import { UserDataBuilder } from '@/users/helpers/user-data-builder'
+import slugify from 'slugify'
+import { faker } from '@faker-js/faker'
 
 describe('PostRepository Integration Tests', () => {
   let module: TestingModule
@@ -20,7 +22,7 @@ describe('PostRepository Integration Tests', () => {
 
   beforeEach(async () => {
     await prisma.post.deleteMany()
-    // await prisma.author.deleteMany()
+    await prisma.user.deleteMany()
   })
 
   afterAll(async () => {
@@ -39,14 +41,15 @@ describe('PostRepository Integration Tests', () => {
 
   test('should find a post by id', async () => {
     const postData = PostDataBuilder({})
-    // const authorData = AuthorDataBuilder({})
-    // const author = await prisma.author.create({ data: authorData })
+    const userData = UserDataBuilder({})
+    const user = await prisma.user.create({ data: userData })
 
     const post = await prisma.post.create({
       data: {
         ...postData,
-        author: {
-          connect: { ...author },
+        slug: slugify(postData.title),
+        user: {
+          connect: { ...user },
         },
       },
     })
@@ -56,20 +59,26 @@ describe('PostRepository Integration Tests', () => {
   })
 
   test('should create a post', async () => {
-    const postData = PostsDataBuilder({})
-    const authorData = AuthorDataBuilder({})
-    const author = await prisma.author.create({ data: authorData })
+    const postData = PostDataBuilder({})
+    const userData = UserDataBuilder({})
+    const user = await prisma.user.create({ data: userData })
 
-    const result = await repository.create({ ...postData, authorId: author.id })
-    expect(result).toMatchObject(postData)
+    const postDataWithSlug = {
+      ...postData,
+      slug: slugify(postData.title, { lower: true }),
+      userId: user.id
+    };
+
+    const result = await repository.create(postDataWithSlug)
+    expect(result).toMatchObject(postDataWithSlug)
   })
 
   test('should throws an error when updating a post not found', async () => {
-    const data = PostsDataBuilder({})
+    const data = PostDataBuilder({})
     const post = {
       ...data,
       id: '796c5a25-1d3b-4228-9a75-06f416c6e218',
-      authorId: '796c5a25-1d3b-4228-9a75-06f416c6e218',
+      userId: '796c5a25-1d3b-4228-9a75-06f416c6e218',
     }
     await expect(repository.update(post)).rejects.toThrow(
       new NotFoundError(
@@ -79,18 +88,30 @@ describe('PostRepository Integration Tests', () => {
   })
 
   test('should update a post', async () => {
-    const postData = PostsDataBuilder({})
-    const authorData = AuthorDataBuilder({})
-    const author = await prisma.author.create({ data: authorData })
+    const postData = PostDataBuilder({})
+    const userData = UserDataBuilder({})
+    const user = await prisma.user.create({ data: userData })
 
-    const post = await repository.create({ ...postData, authorId: author.id })
-    const result = await repository.update({
+    const postDataWithSlug = {
+      ...postData,
+      slug: slugify(postData.title, { lower: true }),
+      userId: user.id,
+      published : false
+    };
+
+    const post = await repository.create(postDataWithSlug)
+
+    const content = faker.lorem.paragraphs(8)
+
+    const updatedPost = {
       ...post,
       published: true,
-      title: 'title-updated',
-    })
+      content
+    }
+    const result = await repository.update(updatedPost)
+
     expect(result.published).toEqual(true)
-    expect(result.title).toEqual('title-updated')
+    expect(result.content).toEqual(content)
   })
 
   test('should return null when it does not find an post with the slug provided', async () => {
@@ -99,15 +120,15 @@ describe('PostRepository Integration Tests', () => {
   })
 
   test('should find a post by slug', async () => {
-    const postData = PostsDataBuilder({})
-    const authorData = AuthorDataBuilder({})
-    const author = await prisma.author.create({ data: authorData })
+    const postData = PostDataBuilder({})
+    const userData = UserDataBuilder({})
+    const user = await prisma.user.create({ data: userData })
 
     const post = await prisma.post.create({
       data: {
         ...postData,
-        author: {
-          connect: { ...author },
+        user: {
+          connect: { ...user },
         },
       },
     })
@@ -115,6 +136,5 @@ describe('PostRepository Integration Tests', () => {
     const result = await repository.findBySlug(post.slug)
     expect(result).toStrictEqual(post)
   })
-
 
 })

@@ -4,7 +4,8 @@ import { PostStatus, PostVisibility } from '@prisma/client'
 
 export function PostDataBuilder(props: Partial<PostDTO>): Omit<PostDTO, 'id' | 'userId'> {
   return {
-    title: props.title ?? faker.word.words(4),
+    title: props.title ?? faker.word.words(),
+    slug: props.slug ?? faker.word.words(),
     isAnonymous: props.isAnonymous ?? faker.datatype.boolean(),
     published: props.published ?? faker.datatype.boolean(),
     content: props.content ?? faker.lorem.paragraphs(5),

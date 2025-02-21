@@ -2,9 +2,24 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type UserDTO {
+  id: ID!
+  username: String!
+  email: String
+  bio: String
+  isVerified: Boolean!
+  createdAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type PostDTO {
   id: ID!
   title: String!
+  slug: String!
   content: String!
   imageUrl: String
   published: Boolean!
@@ -14,6 +29,7 @@ type PostDTO {
   lessonLearned: String
   status: PostStatus!
   userId: String!
+  user: UserDTO!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -32,11 +48,6 @@ enum PostStatus {
   DELETED
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type PostOutput {
   id: ID!
   title: String!
@@ -51,17 +62,28 @@ type PostOutput {
   createdAt: DateTime!
 }
 
+type SearchAuthorsResult {
+  items: [PostDTO!]!
+  currentPage: Int!
+  perPage: Int!
+  lastPage: Int!
+  total: Int!
+}
+
 type Query {
   hello: String!
   posts: [PostDTO!]!
+  getAllPosts(page: Int, perPage: Int, sort: String, sortDir: String, filter: String): SearchAuthorsResult!
   postById(postId: String!): PostDTO
+  getUserById(id: String!): UserDTO!
 }
 
 type Mutation {
   loginFacebook: String!
-  createPost(userId: String!, data: CreatePostInput!): PostOutput!
+  createPost(data: CreatePostInput!): PostOutput!
   updatePost(data: UpdatePostInput!): PostDTO!
-  deletePost(postId: String!): PostDTO!
+  deletePost(id: String!): PostDTO!
+  updateUser(userId: String!, data: UpdateUserInput!): UserDTO!
 }
 
 input CreatePostInput {
@@ -71,12 +93,13 @@ input CreatePostInput {
   published: Boolean
   isAnonymous: Boolean
   visibility: PostVisibility
+  status: PostStatus
   location: String
   lessonLearned: String
 }
 
 input UpdatePostInput {
-  postId: String!
+  id: String!
   title: String
   content: String
   imageUrl: String
@@ -85,4 +108,10 @@ input UpdatePostInput {
   visibility: PostVisibility
   location: String
   lessonLearned: String
+}
+
+input UpdateUserInput {
+  username: String
+  email: String
+  bio: String
 }
