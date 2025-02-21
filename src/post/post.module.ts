@@ -4,6 +4,8 @@ import { PostRepository } from './repositories/post.repository';
 import { PrismaService } from "@/database/prisma/prisma.service";
 import { CreatePostUseCase } from './usecases/create-post.usecase';
 import { UpdatePostUseCase } from './usecases/update-post.usecase';
+import { ListPostsUsecase } from '@/post/usecases/list-posts.usecase'
+import { DeletePostUsecase } from '@/post/usecases/delete-post.usecase'
 
 @Module({
   providers: [
@@ -12,6 +14,8 @@ import { UpdatePostUseCase } from './usecases/update-post.usecase';
     PostRepository,
     CreatePostUseCase,
     UpdatePostUseCase,
+    ListPostsUsecase,
+    DeletePostUsecase
   ],
 })
 export class PostModule {}
