@@ -1,6 +1,7 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
-import { PostVisibility } from '@prisma/client';
+import { PostStatus, PostVisibility } from '@prisma/client'
 import { Exclude, Expose } from 'class-transformer';
+import { IsEnum, IsOptional } from 'class-validator'
 
 @ObjectType()
 export class PostOutput {
@@ -32,6 +33,10 @@ export class PostOutput {
   @Expose()
   visibility: PostVisibility;
 
+  @Field(() => PostStatus)
+  @Expose()
+  status: PostStatus;
+
   @Field(() => Boolean)
   @Expose()
   isAnonymous: boolean;
@@ -53,7 +58,4 @@ export class PostOutput {
 
   @Exclude()
   updatedAt: Date;
-
-  @Exclude()
-  status: string;
 }
