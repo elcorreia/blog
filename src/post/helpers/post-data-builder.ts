@@ -4,7 +4,7 @@ import { PostStatus, PostVisibility } from '@prisma/client'
 import slugify from 'slugify'
 
 export function PostDataBuilder(props: Partial<PostDTO>): Omit<PostDTO, 'id' | 'userId'> {
-  const title = props.title ?? faker.word.words()
+  const title = props.title ?? faker.word.words(3)
 
   return {
     title,
