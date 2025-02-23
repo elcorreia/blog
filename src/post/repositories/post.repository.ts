@@ -36,10 +36,6 @@ export class PostRepository {
 
   async findById(postId: string): Promise<Post> {
     const post = await this.get(postId);// this.prisma.post.findUnique({ where: { id: postId } });
-
-    if (!post) {
-      throw new NotFoundError(`Post not found using ID ${postId}`)
-    }
     return post
   }
 

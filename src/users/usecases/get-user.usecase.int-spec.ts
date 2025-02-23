@@ -2,23 +2,22 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { PrismaClient } from '@prisma/client'
 import { execSync } from 'node:child_process'
 import { NotFoundError } from '@/shared/erros/not-found-error'
-import { GetPostUsecase } from './get-post.usecase'
-import { PostRepository } from '@/post/repositories/post.repository'
-import { PostDataBuilder } from '@/post/helpers/post-data-builder'
+import { GetUserUsecase } from './get-user.usecase'
 import { UserDataBuilder } from '@/users/helpers/user-data-builder'
+import { UserRepository } from '@/users/repositories/user.repository'
 
 describe('GetUserUsecase Integration Tests', () => {
   let module: TestingModule
-  let repository: PostRepository
-  let usecase: GetPostUsecase
+  let repository: UserRepository
+  let usecase: GetUserUsecase
   const prisma = new PrismaClient()
 
   beforeAll(async () => {
     execSync('npm run prisma:migratetest')
     await prisma.$connect()
     module = await Test.createTestingModule({}).compile()
-    repository = new PostRepository(prisma as any)
-    usecase = new GetPostUsecase(repository)
+    repository = new UserRepository(prisma as any)
+    usecase = new GetUserUsecase(repository)
   })
 
   beforeEach(async () => {
@@ -35,21 +34,13 @@ describe('GetUserUsecase Integration Tests', () => {
     ).rejects.toBeInstanceOf(NotFoundError)
   })
 
-  test('should be able to get author by id', async () => {
-    const data = PostDataBuilder({})
+  test('should be able to get user by id', async () => {
+
     const userData = UserDataBuilder({})
 
     const user = await prisma.user.create({ data: userData })
 
-    const post = await prisma.post.create({
-      data: {
-        ...data,
-        user: { connect: { id: user.id } },
-      },
-    });
-
-
-    const result = await usecase.execute(post.id)
-    expect(result).toStrictEqual(post)
+    const result = await usecase.execute(user.id)
+    expect(result).toStrictEqual(user)
   })
 })

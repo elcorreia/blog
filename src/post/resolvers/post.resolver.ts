@@ -12,6 +12,7 @@ import { SearchParamsArgs } from '@/shared/dto/search-params.args'
 import { UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { GqlAuthGuard } from '@/auth/guards/gql-auth.guard'
+import { GetPostUsecase } from '@/post/usecases/get-post.usecase'
 
 @Resolver(() => PostDTO)
 export class PostResolver {
@@ -20,6 +21,7 @@ export class PostResolver {
     private readonly createPostUseCase: CreatePostUseCase,
     private readonly updatePostUseCase: UpdatePostUseCase,
     private readonly listPostUseCase: ListPostsUsecase,
+    private readonly getPostUseCase: GetPostUsecase,
   ) {}
 
   @Query(() => [PostDTO], { name: 'posts' })
@@ -43,7 +45,7 @@ export class PostResolver {
 
   @Query(() => PostDTO, { name: 'postById', nullable: true })
   async getPostById(@Args('postId') postId: string) {
-    return this.postRepository.findById(postId);
+    return this.getPostUseCase.execute(postId);
   }
 
 

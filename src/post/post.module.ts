@@ -6,6 +6,7 @@ import { CreatePostUseCase } from './usecases/create-post.usecase';
 import { UpdatePostUseCase } from './usecases/update-post.usecase';
 import { ListPostsUsecase } from '@/post/usecases/list-posts.usecase'
 import { DeletePostUsecase } from '@/post/usecases/delete-post.usecase'
+import { GetPostUsecase } from '@/post/usecases/get-post.usecase'
 
 @Module({
   providers: [
@@ -15,7 +16,8 @@ import { DeletePostUsecase } from '@/post/usecases/delete-post.usecase'
     CreatePostUseCase,
     UpdatePostUseCase,
     ListPostsUsecase,
-    DeletePostUsecase
+    DeletePostUsecase,
+    GetPostUsecase
   ],
 })
 export class PostModule {}

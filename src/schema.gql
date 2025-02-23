@@ -76,7 +76,7 @@ type Query {
   posts: [PostDTO!]!
   getAllPosts(page: Int, perPage: Int, sort: String, sortDir: String, filter: String): SearchAuthorsResult!
   postById(postId: String!): PostDTO
-  getUserById(id: String!): UserDTO!
+  getUserById(id: String!): UserDTO
 }
 
 type Mutation {
@@ -84,7 +84,7 @@ type Mutation {
   createPost(data: CreatePostInput!): PostOutput!
   updatePost(data: UpdatePostInput!): PostDTO!
   deletePost(id: String!): PostDTO!
-  updateUser(userId: String!, data: UpdateUserInput!): UserDTO!
+  updateUser(data: UpdateUserInput!): UserDTO!
 }
 
 input CreatePostInput {
@@ -112,6 +112,7 @@ input UpdatePostInput {
 }
 
 input UpdateUserInput {
+  id: ID!
   username: String
   email: String
   bio: String
